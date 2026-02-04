@@ -14,6 +14,23 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div
+                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-indigo-500">
+                    <div class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wide">Total
+                        Analyses</div>
+                    <div class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ $totalAnalyses }}</div>
+                </div>
+                <div
+                    class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 border-l-4 border-purple-500">
+                    <div class="text-gray-500 dark:text-gray-400 text-sm font-medium uppercase tracking-wide">Total
+                        Words Scanned</div>
+                    <div class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ number_format($totalWords) }}
+                    </div>
+                </div>
+            </div>
+
             @if (session('status'))
                 <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
                     role="alert">
@@ -42,8 +59,20 @@
                                         title="{{ $analysis->title }}">
                                         {{ $analysis->title ?: 'Untitled Analysis' }}
                                     </h3>
+                                    
+                                    <form action="{{ route('analyses.destroy', $analysis) }}" method="POST"
+                                        onsubmit="return confirm('Are you sure?');" class="ml-2">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-gray-400 hover:text-red-500 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    
                                     <span
-                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                        class="absolute top-0 right-0 mt-6 mr-6 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hidden">
                                         {{ $analysis->status }}
                                     </span>
                                 </div>
@@ -58,10 +87,16 @@
                                         <span>{{ $analysis->word_count }} words</span>
                                         <span>Readability: {{ $analysis->readability_score }}</span>
                                     </div>
-                                    <a href="{{ route('analyses.show', $analysis) }}"
-                                        class="text-indigo-600 dark:text-indigo-400 hover:underline">
-                                        View &rarr;
-                                    </a>
+                                    <div class="flex gap-4">
+                                        <a href="{{ route('analyses.edit', $analysis) }}"
+                                            class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                            Edit
+                                        </a>
+                                        <a href="{{ route('analyses.show', $analysis) }}"
+                                            class="text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            View &rarr;
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

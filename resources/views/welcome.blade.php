@@ -24,10 +24,9 @@
             <div class="flex justify-between h-16 items-center">
                 <div class="flex-shrink-0 flex items-center gap-2">
                     <!-- Logo Icon -->
-                    <div
-                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl">
-                        L</div>
-                    <span class="font-bold text-xl tracking-tight dark:text-white">LexiScan</span>
+                    <!-- Logo Icon -->
+                    <img src="{{ asset('logo.png') }}" alt="LexiScan" class="h-12 w-auto object-contain rounded-lg">
+                    <span class="font-bold text-xl tracking-tight dark:text-white"></span>
                 </div>
                 <div class="flex items-center gap-4">
                     @if (Route::has('login'))
@@ -198,29 +197,20 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center gap-2 justify-center sm:justify-start mb-4">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
-                            L</div>
                         <span class="font-bold text-xl dark:text-white">LexiScan</span>
                     </div>
                     <p class="text-gray-500 dark:text-gray-400 text-sm max-w-xs mx-auto sm:mx-0">
                         Empowering writers with data-driven insights. Simple, fast, and beautiful text analysis.
                     </p>
                 </div>
-                <div>
-                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">Product</h4>
-                    <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li><a href="#" class="hover:text-indigo-600 transition">Features</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 transition">Pricing</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 transition">API</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">Legal</h4>
-                    <ul class="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                        <li><a href="#" class="hover:text-indigo-600 transition">Privacy</a></li>
-                        <li><a href="#" class="hover:text-indigo-600 transition">Terms</a></li>
-                    </ul>
+                <div class="col-span-1 md:col-span-2">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">About the Analysis</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        LexiScan uses the <span class="font-semibold text-indigo-600 dark:text-indigo-400">Flesch
+                            Reading Ease</span> formula to quantify text complexity. We believe in writing for humans
+                        first. Optimize your content for your specific audience, whether that's clear business pros or
+                        technical experts.
+                    </p>
                 </div>
             </div>
             <div

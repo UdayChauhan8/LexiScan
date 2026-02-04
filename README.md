@@ -1,11 +1,29 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## About LexiScan
+
+LexiScan is a powerful readability analysis tool built on Laravel. It helps writers optimize their content for specific audiences by calculating the Flesch Reading Ease score and providing content-aware insights.
+
+## How to Interpret Scores
+
+Unlike simple "higher is better" metrics, the ideal Flesch Reading Ease score depends entirely on your target audience and content type. LexiScan emphasizes **context** over raw numbers.
+
+### Ideal Score Ranges
+
+| Content Type | Ideal Range | Why? |
+| :--- | :--- | :--- |
+| **Child / Beginner** | **80 - 95** | Requires very short sentences and basic vocabulary for early readers. |
+| **Lifestyle Blog** | **65 - 75** | conversational tone for general leisure reading. |
+| **Marketing / SEO** | **55 - 65** | Balances professional credibility with persuasion. Scores > 80 may feel too simple. |
+| **Business** | **45 - 60** | Precision and professional terminology are prioritized over simplicity. |
+| **Technical** | **30 - 50** | Complex concepts often require longer sentences and technical jargon. |
+
+> **Note:** A score of 45 is "bad" for a children's book but "excellent" for a medical journal. Use the **Score Context** block in your analysis report to judge your content accurately.
+
+### Higher Is Not Always Better
+Scores above 80 are rare for adult-focused writing and are not required for clarity. Chasing a score of 90+ for a business report will likely result in unnatural, over-simplified text that lacks authority.
+
+---
 
 ## About Laravel
 
@@ -13,47 +31,10 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
 - [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Multiple back-ends for session and cache storage](https://laravel.com/docs/session).
+- [Expressive, intuitive database ORM](https://laravel.com/docs/eloquent).
+- [Database agnostic schema migrations](https://laravel.com/docs/migrations).
 - [Robust background job processing](https://laravel.com/docs/queues).
 - [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

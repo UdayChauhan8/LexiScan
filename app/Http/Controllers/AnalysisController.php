@@ -21,7 +21,10 @@ class AnalysisController extends Controller
     public function index(): View
     {
         $analyses = Auth::user()->analyses()->latest()->paginate(9);
-        return view('analyses.index', compact('analyses'));
+        $totalAnalyses = Auth::user()->analyses()->count();
+        $totalWords = Auth::user()->analyses()->sum('word_count');
+
+        return view('analyses.index', compact('analyses', 'totalAnalyses', 'totalWords'));
     }
 
     public function create(): View
@@ -56,6 +59,31 @@ class AnalysisController extends Controller
             abort(403);
         }
         return view('analyses.show', compact('analysis'));
+    }
+
+    public function edit(Analysis $analysis): View
+    {
+        if ($analysis->user_id !== Auth::id()) {
+            abort(403);
+        }
+        return view('analyses.edit', compact('analysis'));
+    }
+
+    public function update(Request $request, Analysis $analysis): RedirectResponse
+    {
+        if ($analysis->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+        ]);
+
+        $analysis->update([
+            'title' => $validated['title'],
+        ]);
+
+        return redirect()->route('analyses.show', $analysis)->with('status', 'Analysis updated successfully.');
     }
 
     public function destroy(Analysis $analysis): RedirectResponse

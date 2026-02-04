@@ -13,6 +13,15 @@
             </h2>
             <div class="flex items-center gap-3">
                 <span class="text-xs text-gray-400 font-mono">{{ $analysis->created_at->format('M d, Y') }}</span>
+                <a href="{{ route('analyses.edit', $analysis) }}"
+                    class="p-2 text-gray-400 hover:text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors"
+                    title="Edit Analysis">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                        </path>
+                    </svg>
+                </a>
                 <form action="{{ route('analyses.destroy', $analysis) }}" method="POST"
                     onsubmit="return confirm('Are you sure you want to delete this analysis?');">
                     @csrf
@@ -67,7 +76,8 @@
                         Count</div>
                     <div
                         class="mt-1 text-4xl font-extrabold text-gray-900 dark:text-white group-hover:text-indigo-500 transition-colors">
-                        {{ number_format($analysis->word_count) }}</div>
+                        {{ number_format($analysis->word_count) }}
+                    </div>
                     <div class="mt-2 text-xs text-gray-400 font-medium">approx. {{ ceil($analysis->word_count / 200) }}
                         min read</div>
                 </div>
@@ -137,7 +147,8 @@
                     <div class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Avg
                         Length</div>
                     <div class="mt-1 text-4xl font-extrabold text-gray-900 dark:text-white">
-                        {{ $analysis->avg_sentence_length }}</div>
+                        {{ $analysis->avg_sentence_length }}
+                    </div>
                     <div class="mt-2 text-xs text-gray-400 font-medium">words per sentence</div>
                 </div>
             </div>
@@ -180,6 +191,129 @@
 
                 <!-- Right Column: Tools & Insights -->
                 <div class="lg:col-span-1 space-y-6">
+
+                    <!-- Score Context Card -->
+                    <div x-data="{
+                        selected: 'marketing',
+                        score: {{ $analysis->readability_score }},
+                        categories: {
+                            lifestyle: {
+                                label: 'Simple Blog / Lifestyle',
+                                min: 65,
+                                max: 75,
+                                desc: 'Optimized for general audiences reading for leisure.',
+                                rationale: 'Uses conversational language and simple sentence structures.'
+                            },
+                            marketing: {
+                                label: 'Marketing / SEO Blog',
+                                min: 55,
+                                max: 65,
+                                desc: 'Optimized for adult readers and search engines.',
+                                rationale: 'Uses professional vocabulary and persuasive language.'
+                            },
+                            business: {
+                                label: 'Business / Professional',
+                                min: 45,
+                                max: 60,
+                                desc: 'Optimized for business comms and reports.',
+                                rationale: 'Prioritizes precision and professional terminology over simplicity.'
+                            },
+                            technical: {
+                                label: 'Technical / Educational',
+                                min: 30,
+                                max: 50,
+                                desc: 'Optimized for specialized knowledge transfer.',
+                                rationale: 'Requires complex sentences to explain detailed concepts.'
+                            },
+                            beginner: {
+                                label: 'Child / Beginner',
+                                min: 80,
+                                max: 95,
+                                desc: 'Optimized for early readers or language learners.',
+                                rationale: 'Uses very short sentences and basic vocabulary.'
+                            }
+                        },
+                        getStatus() {
+                            const cat = this.categories[this.selected];
+                            if (this.score < cat.min) return 'below';
+                            if (this.score > cat.max) return 'above';
+                            return 'within';
+                        }
+                    }"
+                        class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 dark:border-gray-700/50">
+                            <h3 class="font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                Score Context
+                                <span
+                                    class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-600 text-[10px] uppercase font-bold">New</span>
+                            </h3>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Content
+                                    Type</label>
+                                <select x-model="selected"
+                                    class="w-full text-sm bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                    <template x-for="(cat, key) in categories" :key="key">
+                                        <option :value="key" x-text="cat.label"></option>
+                                    </template>
+                                </select>
+                            </div>
+
+                            <div class="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 transition-colors duration-300">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Ideal
+                                        Range</span>
+                                    <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400"
+                                        x-text="`${categories[selected].min} – ${categories[selected].max}`"></span>
+                                </div>
+                                <p class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-2"
+                                    x-text="categories[selected].desc"></p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 italic"
+                                    x-text="categories[selected].rationale"></p>
+                            </div>
+
+                            <div class="pt-2 border-t border-gray-100 dark:border-gray-700/50">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Your
+                                        Score</span>
+                                    <span class="font-bold text-gray-900 dark:text-white" x-text="score"></span>
+                                </div>
+
+                                <div class="flex items-start gap-3">
+                                    <div x-show="getStatus() === 'within'" class="flex-shrink-0 text-emerald-500">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <div x-show="getStatus() !== 'within'" class="flex-shrink-0 text-amber-500">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                            </path>
+                                        </svg>
+                                    </div>
+
+                                    <div>
+                                        <p class="text-sm font-bold" :class="{
+                                               'text-emerald-600 dark:text-emerald-400': getStatus() === 'within',
+                                               'text-amber-600 dark:text-amber-400': getStatus() !== 'within'
+                                           }"
+                                            x-text="getStatus() === 'within' ? 'Within typical range' : (getStatus() === 'above' ? 'Above typical range' : 'Below typical range')">
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1"
+                                            x-show="getStatus() === 'above'">This may indicate overly simple language
+                                            for this content type.</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1"
+                                            x-show="getStatus() === 'below'">This may indicate dense sentences or
+                                            complex wording.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Share Card -->
                     <div

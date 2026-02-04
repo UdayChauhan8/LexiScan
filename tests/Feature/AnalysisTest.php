@@ -85,4 +85,25 @@ class AnalysisTest extends TestCase
         $this->assertGreaterThan(0, $analysis->readability_score);
         $this->assertEquals(9, $analysis->word_count);
     }
+
+    public function test_user_can_update_analysis()
+    {
+        $user = User::factory()->create();
+        $analysis = Analysis::create([
+            'user_id' => $user->id,
+            'title' => 'Old Title',
+            'content_raw' => 'Some content here.',
+            'word_count' => 3,
+        ]);
+
+        $response = $this->actingAs($user)->patch(route('analyses.update', $analysis), [
+            'title' => 'New Title',
+        ]);
+
+        $response->assertRedirect(route('analyses.show', $analysis));
+        $this->assertDatabaseHas('analyses', [
+            'id' => $analysis->id,
+            'title' => 'New Title',
+        ]);
+    }
 }
