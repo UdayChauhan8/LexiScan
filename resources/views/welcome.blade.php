@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'LexiScan') }} - Intelligent Text Analysis</title>
+    <title>LexiScan</title>
+    <link rel="icon" href="{{ asset('logo.png') }}" type="image/png">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
