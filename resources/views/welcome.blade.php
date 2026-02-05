@@ -72,10 +72,17 @@
                 actionable insights to write better content, faster.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <a href="{{ route('register') }}"
-                    class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-lg hover:shadow-2xl hover:scale-105 transition duration-300">
-                    Start Analyzing for Free
-                </a>
+                @auth
+                    <a href="{{ url('/dashboard') }}"
+                        class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-lg hover:shadow-2xl hover:scale-105 transition duration-300">
+                        Go to Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('register') }}"
+                        class="w-full sm:w-auto px-8 py-4 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold text-lg shadow-lg hover:shadow-2xl hover:scale-105 transition duration-300">
+                        Start Analyzing for Free
+                    </a>
+                @endauth
                 <a href="#features"
                     class="w-full sm:w-auto px-8 py-4 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 font-bold text-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     Learn More

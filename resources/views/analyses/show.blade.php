@@ -261,7 +261,7 @@
                                 </select>
                             </div>
 
-                            <div class="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4 transition-colors duration-300">
+                            <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 transition-colors duration-300">
                                 <div class="flex justify-between items-baseline mb-2">
                                     <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Ideal
                                         Range</span>
@@ -327,14 +327,33 @@
                                     <label
                                         class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Public
                                         Link</label>
-                                    <div class="flex shadow-sm">
+                                    <div class="flex shadow-sm" x-data="{ copied: false }">
                                         <input type="text" readonly
                                             value="{{ route('reports.show', $analysis->report->public_link_token) }}"
                                             onclick="this.select()"
                                             class="w-full text-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-l-lg focus:ring-indigo-500 focus:border-indigo-500">
+
+                                        <button type="button"
+                                            @click="navigator.clipboard.writeText('{{ route('reports.show', $analysis->report->public_link_token) }}'); copied = true; setTimeout(() => copied = false, 2000)"
+                                            class="inline-flex items-center px-3 bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors"
+                                            title="Copy Link">
+                                            <svg x-show="!copied" class="w-4 h-4" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3">
+                                                </path>
+                                            </svg>
+                                            <svg x-show="copied" style="display: none;" class="w-4 h-4 text-green-500"
+                                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </button>
+
                                         <a href="{{ route('reports.show', $analysis->report->public_link_token) }}"
                                             target="_blank"
-                                            class="inline-flex items-center px-4 bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-600 rounded-r-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors">
+                                            class="inline-flex items-center px-4 bg-gray-100 dark:bg-gray-700 border border-l-0 border-gray-200 dark:border-gray-600 rounded-r-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 transition-colors"
+                                            title="Open Public Link">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
