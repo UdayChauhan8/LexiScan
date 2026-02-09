@@ -12,10 +12,12 @@ use Illuminate\Http\RedirectResponse;
 class AnalysisController extends Controller
 {
     protected $analyzer;
+    protected $gemini;
 
-    public function __construct(TextAnalysisService $analyzer)
+    public function __construct(TextAnalysisService $analyzer, \App\Services\GeminiService $gemini)
     {
         $this->analyzer = $analyzer;
+        $this->gemini = $gemini;
     }
 
     public function index(): View
@@ -76,12 +78,23 @@ class AnalysisController extends Controller
         }
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'sometimes|string|max:255',
+            'content' => 'nullable|string|min:10',
         ]);
 
-        $analysis->update([
-            'title' => $validated['title'],
-        ]);
+        $data = [];
+        if (isset($validated['title'])) {
+            $data['title'] = $validated['title'];
+        }
+
+        // If content is updated, re-analyze metrics
+        if (!empty($validated['content'])) {
+            $data['content_raw'] = $validated['content'];
+            $metrics = $this->analyzer->analyze($validated['content']);
+            $data = array_merge($data, $metrics);
+        }
+
+        $analysis->update($data);
 
         return redirect()->route('analyses.show', $analysis)->with('status', 'Analysis updated successfully.');
     }
@@ -93,5 +106,24 @@ class AnalysisController extends Controller
         }
         $analysis->delete();
         return redirect()->route('analyses.index')->with('status', 'Analysis deleted.');
+    }
+
+    public function improve(Request $request, Analysis $analysis)
+    {
+        if ($analysis->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'category' => 'required|string|in:beginner,lifestyle,marketing,business,technical',
+        ]);
+
+        $result = $this->gemini->improveContent(
+            $analysis->content_raw,
+            $validated['category'],
+            $analysis->target_keyword
+        );
+
+        return response()->json($result);
     }
 }

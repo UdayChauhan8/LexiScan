@@ -16,6 +16,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // AI Improvement Route
+    Route::post('/analyses/{analysis}/improve', [\App\Http\Controllers\AnalysisController::class, 'improve'])->name('analyses.improve');
+
     Route::resource('analyses', \App\Http\Controllers\AnalysisController::class);
 
     // Report Management (Generate/Revoke)

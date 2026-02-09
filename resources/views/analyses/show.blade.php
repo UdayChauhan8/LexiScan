@@ -155,7 +155,8 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <!-- Left Column: Content Review -->
-                <div class="lg:col-span-2">
+                <div class="lg:col-span-2" x-data="{ aiResult: null }"
+                    @ai-result-loaded.window="aiResult = $event.detail; $el.scrollIntoView({ behavior: 'smooth', block: 'center' })">
                     <div
                         class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden flex flex-col h-full">
                         <div
@@ -185,6 +186,71 @@
                                 class="font-serif leading-loose text-lg text-gray-700 dark:text-gray-300 whitespace-pre-wrap max-w-none">
                                 {{ $analysis->content_raw }}
                             </div>
+
+                            <!-- AI Split View -->
+                            <div class="mt-8 pt-8 border-t border-gray-100 dark:border-gray-700/50"
+                                x-data="{ view: 'split' }" x-show="aiResult"
+                                x-transition:enter="transition ease-out duration-300"
+                                x-transition:enter-start="opacity-0 translate-y-4"
+                                x-transition:enter-end="opacity-100 translate-y-0" style="display: none;">
+
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="font-bold text-xl text-gray-900 dark:text-white flex items-center gap-2">
+                                        <span
+                                            class="p-1.5 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-lg text-white">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                            </svg>
+                                        </span>
+                                        AI Suggestions
+                                    </h3>
+
+                                    <div class="flex gap-2">
+                                        <div class="flex gap-2">
+                                            <!-- Score Removed -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Original -->
+                                    <div
+                                        class="bg-red-50/50 dark:bg-red-900/10 rounded-xl p-4 border border-red-100 dark:border-red-900/20">
+                                        <div class="text-xs font-bold text-red-500 uppercase tracking-widest mb-3">
+                                            Original</div>
+                                        <div
+                                            class="prose dark:prose-invert max-w-none text-sm leading-relaxed opacity-70">
+                                            {{ $analysis->content_raw }}
+                                        </div>
+                                    </div>
+
+                                    <!-- Improved -->
+                                    <div
+                                        class="bg-emerald-50/50 dark:bg-emerald-900/10 rounded-xl p-4 border border-emerald-100 dark:border-emerald-900/20 relative">
+                                        <div
+                                            class="inline-block bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm mb-3">
+                                            IMPROVED
+                                        </div>
+
+                                        <div class="prose dark:prose-invert max-w-none text-sm leading-relaxed"
+                                            x-text="aiResult?.rewritten_text"></div>
+
+                                        <!-- Key Improvements List -->
+                                        <div
+                                            class="mt-6 pt-4 border-t border-emerald-200/50 dark:border-emerald-700/30">
+                                            <h4 class="text-xs font-bold text-emerald-700 dark:text-emerald-300 mb-2">
+                                                Changes Made:</h4>
+                                            <ul
+                                                class="list-disc list-inside text-xs text-emerald-600 dark:text-emerald-400 space-y-1">
+                                                <template x-for="item in aiResult?.improvements_made">
+                                                    <li x-text="item"></li>
+                                                </template>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -192,10 +258,13 @@
                 <!-- Right Column: Tools & Insights -->
                 <div class="lg:col-span-1 space-y-6">
 
-                    <!-- Score Context Card -->
+                    <!-- Score Context & AI Card -->
                     <div x-data="{
                         selected: 'marketing',
                         score: {{ $analysis->readability_score }},
+                        isImproving: false,
+                        aiResult: null,
+                        error: null,
                         categories: {
                             lifestyle: {
                                 label: 'Simple Blog / Lifestyle',
@@ -238,6 +307,32 @@
                             if (this.score < cat.min) return 'below';
                             if (this.score > cat.max) return 'above';
                             return 'within';
+                        },
+                        async improveContent() {
+                            this.isImproving = true;
+                            this.error = null;
+                            this.aiResult = null;
+                            try {
+                                const response = await fetch(`{{ route('analyses.improve', $analysis) }}`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content
+                                    },
+                                    body: JSON.stringify({ category: this.selected })
+                                });
+                                const data = await response.json();
+                                if(data.error) throw new Error(data.error);
+                                
+                                this.aiResult = data;
+                                // Scroll to top to see results if needed, or we can use a modal. 
+                                // For now, we will dispatch an event to the Split View component (see below)
+                                $dispatch('ai-result-loaded', data); 
+                            } catch (e) {
+                                this.error = e.message || 'Something went wrong.';
+                            } finally {
+                                this.isImproving = false;
+                            }
                         }
                     }"
                         class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-2xl border border-gray-100 dark:border-gray-700/50 overflow-hidden">
@@ -251,8 +346,8 @@
                         <div class="p-6 space-y-4">
                             <div>
                                 <label
-                                    class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Content
-                                    Type</label>
+                                    class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Target
+                                    Audience</label>
                                 <select x-model="selected"
                                     class="w-full text-sm bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-200 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
                                     <template x-for="(cat, key) in categories" :key="key">
@@ -260,6 +355,34 @@
                                     </template>
                                 </select>
                             </div>
+
+                            <!-- Improve Button -->
+                            <button @click="improveContent()" :disabled="isImproving"
+                                class="w-full relative flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 dark:shadow-none transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed group">
+
+                                <span x-show="!isImproving" class="flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                    Improve with AI
+                                </span>
+
+                                <span x-show="isImproving" class="flex items-center gap-2">
+                                    <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                    Optimizing...
+                                </span>
+                            </button>
+
+                            <div x-show="error" class="text-xs text-red-500 font-bold" x-text="error"></div>
+
 
                             <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 transition-colors duration-300">
                                 <div class="flex justify-between items-baseline mb-2">
@@ -304,7 +427,8 @@
                                             x-text="getStatus() === 'within' ? 'Within typical range' : (getStatus() === 'above' ? 'Above typical range' : 'Below typical range')">
                                         </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1"
-                                            x-show="getStatus() === 'above'">This may indicate overly simple language
+                                            x-show="getStatus() === 'above'">This may indicate overly simple
+                                            language
                                             for this content type.</p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1"
                                             x-show="getStatus() === 'below'">This may indicate dense sentences or
@@ -370,7 +494,8 @@
                                         Link</button>
                                 </form>
                             @else
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Generate a secure,
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">Generate a
+                                    secure,
                                     public link to share this analysis with clients or colleagues.</p>
                                 <form action="{{ route('reports.store', $analysis) }}" method="POST">
                                     @csrf
@@ -402,9 +527,11 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Sentence Variety
+                                        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Sentence
+                                            Variety
                                         </p>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Aim for
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Aim
+                                            for
                                             a mix of short and long sentences to keep readers engaged.</p>
                                     </div>
                                 </li>
@@ -419,7 +546,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Target Keyword</p>
+                                        <p class="text-sm font-bold text-gray-900 dark:text-gray-100">Target Keyword
+                                        </p>
                                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                             @if($analysis->target_keyword)
                                                 Optimizing for: <span
