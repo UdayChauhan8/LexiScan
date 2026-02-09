@@ -184,16 +184,15 @@
                 <div
                     class="relative p-8 bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-md transition border border-gray-100 dark:border-gray-700">
                     <div
-                        class="w-12 h-12 rounded-xl bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 flex items-center justify-center mb-6">
+                        class="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-6">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
-                            </path>
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path> <!-- Using bolt for speed/power, or can use sparkles -->
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Public Reports</h3>
-                    <p class="text-gray-500 dark:text-gray-400 leading-relaxed">Generated uniquely shareable links to
-                        send your analysis to clients, editors, or friends.</p>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">AI-Powered Rewrites</h3>
+                    <p class="text-gray-500 dark:text-gray-400 leading-relaxed">Instantly transform your drafts. Our 
+                        AI engine improves flow, fixes passive voice, and boosts readability in one click.</p>
                 </div>
             </div>
         </div>
@@ -211,13 +210,18 @@
                         Empowering writers with data-driven insights. Simple, fast, and beautiful text analysis.
                     </p>
                 </div>
-                <div class="col-span-1 md:col-span-2">
-                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">About the Analysis</h4>
+                <div class="col-span-1">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">Core Analysis</h4>
                     <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                         LexiScan uses the <span class="font-semibold text-indigo-600 dark:text-indigo-400">Flesch
-                            Reading Ease</span> formula to quantify text complexity. We believe in writing for humans
-                        first. Optimize your content for your specific audience, whether that's clear business pros or
-                        technical experts.
+                            Reading Ease</span> formula to quantify text complexity. We believe in writing for humans first.
+                    </p>
+                </div>
+                <div class="col-span-1">
+                    <h4 class="font-bold text-gray-900 dark:text-white mb-4">AI Power</h4>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+                        Enhanced by <span class="font-semibold text-emerald-600 dark:text-emerald-400">Google Gemini</span>, 
+                        LexiScan now offers instant content rewriting to improve flow, tone, and SEO impact automatically.
                     </p>
                 </div>
             </div>
