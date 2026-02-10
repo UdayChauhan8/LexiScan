@@ -2,7 +2,7 @@
 
 ## About LexiScan
 
-LexiScan is a powerful readability analysis tool built on Laravel. It helps writers optimize their content for specific audiences by calculating the Flesch Reading Ease score and providing content-aware insights.
+LexiScan is a **Laravel**-based content optimization platform integrating **Gemini API** to deliver real-time AI readability analysis and actionable writing enhancements. It helps writers optimize their content for specific audiences by calculating the Flesch Reading Ease score and providing content-aware insights.
 
 ## How to Interpret Scores
 
